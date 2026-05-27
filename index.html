@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Odessy Travel — Discover Sri Lanka</title>
+  <meta name="description" content="Private tours, cultural journeys, and wildlife adventures across Sri Lanka with expert local drivers. 5-star rated on TripAdvisor.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green:        #1B4D3E;
+      --green-dark:   #0F2E23;
+      --green-mid:    #2D6A56;
+      --gold:         #C9A84C;
+      --gold-light:   #E8C97A;
+      --cream:        #F7F4EE;
+      --white:        #FFFFFF;
+      --text:         #1A1A1A;
+      --text-mid:     #4A5568;
+      --text-light:   #6B7280;
+      --border:       #E5E0D5;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      background: var(--white);
+      overflow-x: hidden;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed;
+      inset: 0 0 auto 0;
+      z-index: 100;
+      padding: 22px 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.35s, padding 0.35s, box-shadow 0.35s;
+    }
+    nav.scrolled {
+      background: var(--green-dark);
+      padding: 14px 56px;
+      box-shadow: 0 2px 24px rgba(0,0,0,0.35);
+    }
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.55rem;
+      color: #fff;
+      text-decoration: none;
+      letter-spacing: 0.3px;
+    }
+    .nav-logo span { color: var(--gold); }
+    .nav-links { display: flex; gap: 36px; list-style: none; align-items: center; }
+    .nav-links a {
+      color: rgba(255,255,255,0.88);
+      text-decoration: none;
+      font-size: 0.82rem;
+      font-weight: 500;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-cta {
+      background: var(--gold) !important;
+      color: var(--green-dark) !important;
+      padding: 10px 26px !important;
+      border-radius: 5px;
+      font-weight: 600 !important;
+      transition: background 0.2s, transform 0.2s !important;
+    }
+    .nav-cta:hover { background: var(--gold-light) !important; transform: translateY(-1px); }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 4px;
+    }
+    .hamburger span { display: block; width: 26px; height: 2px; background: #fff; border-radius: 2px; transition: all 0.3s; }
+
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: var(--green-dark);
+      z-index: 99;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 36px;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      color: #fff;
+      text-decoration: none;
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem;
+      transition: color 0.2s;
+    }
+    .mobile-menu a:hover { color: var(--gold); }
+    .mobile-close {
+      position: absolute;
+      top: 22px; right: 30px;
+      background: none; border: none;
+      color: #fff; font-size: 2.2rem;
+      cursor: pointer; line-height: 1;
+    }
+
+    /* ─── HERO ─── */
+    #hero {
+      position: relative;
+      height: 100vh;
+      min-height: 620px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 80px 24px 48px;
+      background:
+        linear-gradient(to bottom, rgba(10,30,22,0.48) 0%, rgba(10,30,22,0.58) 100%),
+        url('https://dynamic-media-cdn.tripadvisor.com/media/photo-o/32/fa/1c/de/caption.jpg?w=1400&h=-1&s=1')
+        center / cover no-repeat;
+    }
+    .hero-content { max-width: 780px; }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      background: rgba(255,255,255,0.95);
+      border: none;
+      padding: 10px 22px 10px 14px;
+      border-radius: 100px;
+      margin-bottom: 28px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+    }
+    .hero-badge .ta-logo { height: 32px; display: block; object-fit: contain; }
+    .hero-badge .sep { width: 1px; height: 24px; background: rgba(0,0,0,0.15); }
+    .hero-badge .ta-text { font-size: 0.78rem; color: #333; font-weight: 600; letter-spacing: 0.2px; white-space: nowrap; }
+    .hero-badge .ta-text span { color: #34E0A1; font-weight: 700; }
+    .hero-content h1 {
+      font-size: clamp(3rem, 6.5vw, 5.2rem);
+      color: #fff;
+      line-height: 1.08;
+      margin-bottom: 22px;
+      text-shadow: 0 3px 24px rgba(0,0,0,0.25);
+    }
+    .hero-content h1 em { color: var(--gold); font-style: italic; }
+    .hero-content p {
+      font-size: clamp(1rem, 2vw, 1.18rem);
+      color: rgba(255,255,255,0.85);
+      line-height: 1.72;
+      margin-bottom: 40px;
+      font-weight: 300;
+    }
+    .hero-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+    .btn-primary {
+      background: var(--gold);
+      color: var(--green-dark);
+      padding: 17px 40px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.97rem;
+      letter-spacing: 0.3px;
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-primary:hover {
+      background: var(--gold-light);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(201,168,76,0.45);
+    }
+    .btn-outline {
+      background: transparent;
+      color: #fff;
+      padding: 17px 40px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.97rem;
+      border: 2px solid rgba(255,255,255,0.5);
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .btn-outline:hover { border-color: #fff; background: rgba(255,255,255,0.08); }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 34px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: rgba(255,255,255,0.45);
+      font-size: 0.68rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      animation: nudge 2.4s ease-in-out infinite;
+    }
+    .scroll-hint::after { content: ''; width: 1px; height: 38px; background: rgba(255,255,255,0.25); }
+    @keyframes nudge {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50%       { transform: translateX(-50%) translateY(7px); }
+    }
+
+    /* ─── SHARED ─── */
+    section { padding: 100px 24px; }
+    .container { max-width: 1160px; margin: 0 auto; }
+
+    .label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 14px;
+      display: block;
+    }
+    .title {
+      font-size: clamp(2rem, 4vw, 2.9rem);
+      line-height: 1.15;
+      margin-bottom: 18px;
+    }
+    .title em { color: var(--green); font-style: italic; }
+    .subtitle {
+      font-size: 1.06rem;
+      color: var(--text-mid);
+      line-height: 1.78;
+      max-width: 580px;
+    }
+
+    /* ─── ABOUT ─── */
+    #about { background: var(--cream); }
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 88px;
+      align-items: center;
+    }
+    .about-images { position: relative; }
+    .about-main {
+      width: 100%;
+      border-radius: 14px;
+      aspect-ratio: 4/3;
+      object-fit: cover;
+      display: block;
+    }
+    .about-thumb {
+      position: absolute;
+      bottom: -28px; right: -28px;
+      width: 52%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      border-radius: 12px;
+      border: 5px solid var(--white);
+      box-shadow: 0 10px 36px rgba(0,0,0,0.2);
+    }
+    .about-chip {
+      position: absolute;
+      top: 24px; left: -24px;
+      background: var(--green);
+      color: #fff;
+      padding: 18px 22px;
+      border-radius: 12px;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.22);
+      text-align: center;
+      min-width: 110px;
+    }
+    .about-chip strong {
+      display: block;
+      font-family: 'Playfair Display', serif;
+      font-size: 2.1rem;
+      color: var(--gold);
+      line-height: 1;
+    }
+    .about-chip span { font-size: 0.72rem; opacity: 0.82; white-space: nowrap; }
+
+    .about-body { padding-top: 28px; }
+    .about-body p {
+      font-size: 1.03rem;
+      color: var(--text-mid);
+      line-height: 1.82;
+      margin-bottom: 22px;
+    }
+    .perks { display: flex; flex-direction: column; gap: 18px; margin-top: 36px; }
+    .perk { display: flex; align-items: flex-start; gap: 16px; }
+    .perk-icon {
+      width: 46px; height: 46px;
+      background: rgba(27,77,62,0.1);
+      border-radius: 11px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+    .perk h4 { font-size: 0.96rem; font-family: 'Inter', sans-serif; font-weight: 600; margin-bottom: 3px; }
+    .perk p  { font-size: 0.84rem; color: var(--text-light); margin: 0; line-height: 1.55; }
+
+    /* ─── TOURS ─── */
+    #tours { background: var(--white); }
+    .tours-head { text-align: center; margin-bottom: 64px; }
+    .tours-head .subtitle { margin: 0 auto; }
+    .tours-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 22px;
+    }
+    .tour-card {
+      background: var(--cream);
+      border-radius: 14px;
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .tour-card:hover { transform: translateY(-7px); box-shadow: 0 18px 44px rgba(27,77,62,0.16); }
+    .tour-card img { width: 100%; height: 160px; object-fit: cover; display: block; }
+    .tour-card-body { padding: 22px 18px 26px; text-align: center; }
+    .tour-card-body .icon { font-size: 1.8rem; margin-bottom: 10px; }
+    .tour-card-body h3 { font-size: 0.98rem; font-family: 'Inter', sans-serif; font-weight: 700; color: var(--green); margin-bottom: 7px; }
+    .tour-card-body p { font-size: 0.81rem; color: var(--text-light); line-height: 1.58; }
+
+    /* ─── WHY ─── */
+    #why { background: var(--green-dark); }
+    .why-head { text-align: center; margin-bottom: 68px; }
+    .why-head .title { color: #fff; }
+    .why-head .title em { color: var(--gold); }
+    .why-head .subtitle { color: rgba(255,255,255,0.65); margin: 0 auto; }
+    .why-head .label { color: var(--gold-light); }
+    .why-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; }
+    .why-card {
+      text-align: center;
+      padding: 44px 28px;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 14px;
+      transition: border-color 0.3s, background 0.3s;
+    }
+    .why-card:hover { border-color: var(--gold); background: rgba(255,255,255,0.04); }
+    .why-card .icon { font-size: 2.6rem; margin-bottom: 20px; }
+    .why-card h3 { font-size: 1.08rem; color: var(--gold); font-family: 'Inter', sans-serif; font-weight: 700; margin-bottom: 12px; }
+    .why-card p  { font-size: 0.87rem; color: rgba(255,255,255,0.68); line-height: 1.7; }
+
+    /* ─── REVIEWS ─── */
+    #reviews { background: var(--cream); }
+    .reviews-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 56px;
+      flex-wrap: wrap;
+      gap: 24px;
+    }
+    .ta-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      background: #fff;
+      padding: 16px 22px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      text-decoration: none;
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .ta-badge:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.1); transform: translateY(-2px); }
+    .ta-circle {
+      width: 48px; height: 48px;
+      background: #34E0A1;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 0.88rem;
+      color: #00474F;
+      flex-shrink: 0;
+    }
+    .ta-badge-text strong { display: block; font-size: 0.97rem; color: var(--text); font-weight: 700; }
+    .ta-badge-text span   { font-size: 0.76rem; color: var(--text-light); }
+
+    .reviews-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; }
+    .review-card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 34px 30px;
+      border: 1px solid var(--border);
+      transition: box-shadow 0.3s;
+      display: flex;
+      flex-direction: column;
+    }
+    .review-card:hover { box-shadow: 0 10px 36px rgba(0,0,0,0.08); }
+    .review-top { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+    .review-avatar { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; }
+    .reviewer strong { display: block; font-size: 0.96rem; font-weight: 700; }
+    .reviewer span   { font-size: 0.78rem; color: var(--text-light); }
+    .review-stars    { color: var(--gold); font-size: 1.05rem; letter-spacing: 2px; margin-bottom: 14px; }
+    .review-text     { font-size: 0.9rem; color: var(--text-mid); line-height: 1.78; font-style: italic; flex: 1; }
+    .review-date     { margin-top: 18px; font-size: 0.75rem; color: var(--text-light); }
+
+    /* ─── GALLERY ─── */
+    #gallery { background: var(--white); }
+    .gallery-head { text-align: center; margin-bottom: 44px; }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      grid-template-rows: 260px 260px;
+      gap: 12px;
+    }
+    .g0 { grid-column: 1; grid-row: 1 / 3; }
+    .g1 { grid-column: 2; grid-row: 1; }
+    .g2 { grid-column: 3; grid-row: 1; }
+    .g3 { grid-column: 2; grid-row: 2; }
+    .g4 { grid-column: 3; grid-row: 2; }
+    .g-item { overflow: hidden; border-radius: 10px; cursor: zoom-in; }
+    .g-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.45s ease; display: block; }
+    .g-item:hover img { transform: scale(1.06); }
+    .gallery-more { text-align: center; margin-top: 28px; }
+    .gallery-more a { color: var(--green); font-weight: 600; text-decoration: none; font-size: 0.94rem; display: inline-flex; align-items: center; gap: 6px; transition: color 0.2s; }
+    .gallery-more a:hover { color: var(--gold); }
+
+    /* ─── CONTACT ─── */
+    #contact { background: var(--green-dark); }
+    .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 88px; align-items: start; }
+    .contact-left .title { color: #fff; }
+    .contact-left .title em { color: var(--gold); }
+    .contact-left .label { color: var(--gold-light); }
+    .contact-lead { color: rgba(255,255,255,0.72); line-height: 1.82; margin-bottom: 40px; font-size: 1.04rem; }
+    .c-btns { display: flex; flex-direction: column; gap: 14px; }
+    .c-btn {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 20px 24px;
+      border-radius: 11px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: transform 0.2s, filter 0.2s;
+    }
+    .c-btn:hover { transform: translateX(5px); filter: brightness(1.1); }
+    .c-btn-wa    { background: #25D366; color: #fff; }
+    .c-btn-phone { background: rgba(255,255,255,0.09); color: #fff; border: 1px solid rgba(255,255,255,0.18); }
+    .c-btn-ta    { background: rgba(52,224,161,0.14); color: #34E0A1; border: 1px solid rgba(52,224,161,0.3); }
+    .c-icon { font-size: 1.45rem; }
+    .c-label strong { display: block; font-weight: 700; font-size: 1rem; }
+    .c-label span   { font-size: 0.8rem; opacity: 0.78; }
+
+    .info-cards { display: flex; flex-direction: column; gap: 20px; }
+    .info-card {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px;
+      padding: 30px 28px;
+    }
+    .info-card h4 {
+      color: var(--gold);
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 0.74rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .info-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .info-list li { color: rgba(255,255,255,0.76); font-size: 0.92rem; display: flex; align-items: flex-start; gap: 10px; }
+    .socials-row { display: flex; gap: 10px; margin-top: 14px; }
+    .social-btn {
+      width: 46px; height: 46px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .social-btn i { font-size: 1.05rem; color: rgba(255,255,255,0.85); }
+    .social-btn:hover { background: var(--gold); transform: translateY(-2px); }
+    .social-btn:hover i { color: var(--green-dark); }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: #07150F;
+      color: rgba(255,255,255,0.42);
+      text-align: center;
+      padding: 32px 24px;
+      font-size: 0.82rem;
+      line-height: 1.9;
+    }
+    footer strong { color: rgba(255,255,255,0.72); }
+
+    /* ─── FADE-IN ─── */
+    .fi {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+    .fi.vis { opacity: 1; transform: translateY(0); }
+    .fi-d1 { transition-delay: 0.1s; }
+    .fi-d2 { transition-delay: 0.2s; }
+    .fi-d3 { transition-delay: 0.3s; }
+    .fi-d4 { transition-delay: 0.4s; }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 1024px) {
+      .tours-grid  { grid-template-columns: repeat(3, 1fr); }
+      .why-grid    { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 900px) {
+      nav { padding: 16px 24px; }
+      nav.scrolled { padding: 12px 24px; }
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .about-grid  { grid-template-columns: 1fr; gap: 56px; }
+      .about-thumb { display: none; }
+      .about-chip  { display: none; }
+      .reviews-grid { grid-template-columns: 1fr; }
+      .gallery-grid {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto;
+      }
+      .g0,.g1,.g2,.g3,.g4 { grid-column: auto !important; grid-row: auto !important; height: 220px; }
+      .contact-grid { grid-template-columns: 1fr; gap: 56px; }
+      .reviews-head { flex-direction: column; align-items: flex-start; }
+    }
+    @media (max-width: 640px) {
+      section { padding: 72px 20px; }
+      .tours-grid { grid-template-columns: repeat(2, 1fr); }
+      .why-grid   { grid-template-columns: 1fr; }
+      .hero-actions { flex-direction: column; align-items: center; }
+      .gallery-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav id="navbar">
+  <a href="#hero" class="nav-logo">Odessy <span>Travel</span></a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#tours">Tours</a></li>
+    <li><a href="#reviews">Reviews</a></li>
+    <li><a href="#gallery">Gallery</a></li>
+    <li><a href="#contact" class="nav-cta">Book Now</a></li>
+  </ul>
+  <button class="hamburger" id="ham" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- ── MOBILE MENU ── -->
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-close" id="mobileClose" aria-label="Close menu">×</button>
+  <a href="#about"   class="ml">About</a>
+  <a href="#tours"   class="ml">Tours</a>
+  <a href="#reviews" class="ml">Reviews</a>
+  <a href="#gallery" class="ml">Gallery</a>
+  <a href="#contact" class="ml">Book Now</a>
+</div>
+
+<!-- ── HERO ── -->
+<section id="hero">
+  <div class="hero-content">
+    <div class="hero-badge">
+      <img class="ta-logo" src="https://www.vhv.rs/dpng/d/602-6028388_trip-advisor-tripadvisor-llc-hd-png-download.png" alt="TripAdvisor">
+      <div class="sep"></div>
+      <span class="ta-text"><span>5.0</span> · Rated on TripAdvisor</span>
+    </div>
+    <h1>Discover <em>Sri Lanka</em><br>Like Never Before</h1>
+    <p>Private tours, cultural journeys &amp; wildlife adventures<br>crafted by expert local guides from Katunayake.</p>
+    <div class="hero-actions">
+      <a href="#contact" class="btn-primary">Plan Your Journey &rarr;</a>
+      <a href="#tours"   class="btn-outline">Explore Tours</a>
+    </div>
+  </div>
+  <div class="scroll-hint">Scroll</div>
+</section>
+
+<!-- ── ABOUT ── -->
+<section id="about">
+  <div class="container">
+    <div class="about-grid">
+
+      <div class="about-images fi">
+        <div class="about-chip">
+          <strong>5.0</strong>
+          <span>★★★★★ Rating</span>
+        </div>
+        <img
+          src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/32/d4/fb/c4/professional-tour-services.jpg?w=1200&h=-1&s=1"
+          alt="Professional tour services in Sri Lanka"
+          class="about-main"
+        >
+        <img
+          src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/32/d4/fb/c3/explore-culture-nature.jpg?w=800&h=800&s=1"
+          alt="Explore culture and nature"
+          class="about-thumb"
+        >
+      </div>
+
+      <div class="about-body fi fi-d2">
+        <span class="label">About Us</span>
+        <h2 class="title">Your Journey,<br><em>Our Passion</em></h2>
+        <p>Odessy Travel is a Sri Lanka-based tour company specializing in round tours, multi-day tours, and customized day tours across the island. We create unforgettable travel experiences with carefully planned itineraries, comfortable transport, and experienced local drivers.</p>
+        <p>From cultural heritage sites to scenic landscapes and wildlife adventures, we ensure every journey is smooth, safe, and memorable.</p>
+        <div class="perks">
+          <div class="perk">
+            <div class="perk-icon">🗺️</div>
+            <div>
+              <h4>Deep Local Knowledge</h4>
+              <p>We know the best times to visit each spot and the roads less traveled</p>
+            </div>
+          </div>
+          <div class="perk">
+            <div class="perk-icon">🌐</div>
+            <div>
+              <h4>English Speaking</h4>
+              <p>Communicate comfortably and confidently throughout your trip</p>
+            </div>
+          </div>
+          <div class="perk">
+            <div class="perk-icon">✅</div>
+            <div>
+              <h4>Fully Customizable</h4>
+              <p>Every itinerary tailored to your interests, pace, and budget</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── TOURS ── -->
+<section id="tours">
+  <div class="container">
+    <div class="tours-head fi">
+      <span class="label">What We Offer</span>
+      <h2 class="title">Tours for Every <em>Traveler</em></h2>
+      <p class="subtitle">From quick day trips to epic multi-day adventures — we have an experience for every schedule and style.</p>
+    </div>
+    <div class="tours-grid">
+      <div class="tour-card fi fi-d1">
+        <img src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/32/d4/fb/bf/turn-your-travel-plans.jpg?w=600&h=360&s=1" alt="Multi-day Tours">
+        <div class="tour-card-body">
+          <div class="icon">🏔️</div>
+          <h3>Multi-day Tours</h3>
+          <p>Explore Sri Lanka's highlights over several days with a complete, curated itinerary</p>
+        </div>
+      </div>
+      <div class="tour-card fi fi-d2">
+        <img src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/32/d4/fb/c3/explore-culture-nature.jpg?w=600&h=360&s=1" alt="Cultural Tours">
+        <div class="tour-card-body">
+          <div class="icon">🏛️</div>
+          <h3>Cultural Tours</h3>
+          <p>Ancient temples, heritage cities and traditional villages with knowledgeable guides</p>
+        </div>
+      </div>
+      <div class="tour-card fi fi-d3">
+        <img src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/32/d4/fb/ba/discover-sri-lanka-s.jpg?w=600&h=360&s=1" alt="Eco Tours">
+        <div class="tour-card-body">
+          <div class="icon">🌿</div>
+          <h3>Eco Tours</h3>
+          <p>Wildlife safaris, rainforest hikes, and nature experiences across the island</p>
+        </div>
+      </div>
+      <div class="tour-card fi fi-d2">
+        <img src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/32/d4/fb/b8/private-tours-across.jpg?w=600&h=360&s=1" alt="Private Tours">
+        <div class="tour-card-body">
+          <div class="icon">🚐</div>
+          <h3>Private Tours</h3>
+          <p>Fully private transport — just you, your group, and all of Sri Lanka</p>
+        </div>
+      </div>
+      <div class="tour-card fi fi-d3">
+        <img src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/32/d4/fb/be/reliable-transport-and.jpg?w=600&h=360&s=1" alt="Day Trips">
+        <div class="tour-card-body">
+          <div class="icon">🌅</div>
+          <h3>Day Trips</h3>
+          <p>Packed day trips from Negombo, Colombo, or wherever you are based</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── WHY US ── -->
+<section id="why">
+  <div class="container">
+    <div class="why-head fi">
+      <span class="label">Why Choose Us</span>
+      <h2 class="title">Trusted by Travelers<br><em>Around the World</em></h2>
+      <p class="subtitle">Guests from Israel, Poland, the UK, and beyond — they all say the same thing.</p>
+    </div>
+    <div class="why-grid">
+      <div class="why-card fi fi-d1">
+        <div class="icon">⏱️</div>
+        <h3>Always On Time</h3>
+        <p>Punctuality is our promise. We plan ahead so you never miss a sunrise, a safari, or a train.</p>
+      </div>
+      <div class="why-card fi fi-d2">
+        <div class="icon">🛡️</div>
+        <h3>Safe &amp; Comfortable</h3>
+        <p>Experienced drivers with spotless records. You'll feel at ease from the moment we pick you up.</p>
+      </div>
+      <div class="why-card fi fi-d3">
+        <div class="icon">💡</div>
+        <h3>Local Insider Tips</h3>
+        <p>We know the best time to visit each spot, the local food worth trying, and the scenic detours.</p>
+      </div>
+      <div class="why-card fi fi-d4">
+        <div class="icon">🔄</div>
+        <h3>Flexible Plans</h3>
+        <p>Weather change? Changed your mind? No problem — we adapt on the go to give you the best day.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── REVIEWS ── -->
+<section id="reviews">
+  <div class="container">
+    <div class="reviews-head">
+      <div class="fi">
+        <span class="label">Traveler Stories</span>
+        <h2 class="title">What Our Guests <em>Say</em></h2>
+      </div>
+      <a
+        href="https://www.tripadvisor.com/Attraction_Review-g1500185-d34295367-Reviews-Odessy_Travel-Katunayake_Negombo_Western_Province.html"
+        target="_blank" rel="noopener"
+        class="ta-badge fi"
+      >
+        <img src="https://www.vhv.rs/dpng/d/602-6028388_trip-advisor-tripadvisor-llc-hd-png-download.png" alt="TripAdvisor" style="height:38px;object-fit:contain;display:block;">
+        <div class="ta-badge-text">
+          <strong>★★★★★ on TripAdvisor</strong>
+        </div>
+      </a>
+    </div>
+
+    <!-- TripAdvisor live rating widget — auto-updates when new reviews come in -->
+    <div style="margin-bottom:40px;">
+      <script async src="https://www.jscache.com/wejs?wtype=cdsratingsonlynarrow&amp;uniq=491&amp;locationId=34295367&amp;lang=en_US&amp;display_version=2" data-loadtrk onload="this.loadtrk=true"></script>
+    </div>
+
+    <div class="reviews-grid">
+
+      <div class="review-card fi fi-d1">
+        <div class="review-top">
+          <img src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1a/f6/ec/a2/default-avatar-2020-3.jpg?w=100&h=100&s=1" alt="Rafał R" class="review-avatar">
+          <div class="reviewer">
+            <strong>Rafał R</strong>
+            <span>Poland &middot; Couples trip</span>
+          </div>
+        </div>
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">"We had a great experience with Odessy Travel during our trip around Sri Lanka. Everything was well organized and smooth. Our driver, Kaveesh, was punctual, helpful, experienced, and very easy to talk to. He gave us great advice about the best times to visit different places, which really improved our experience. We could always count on his help during the trip, and that gave us a real sense of comfort and safety. We definitely recommend Odessy Travel and Kaveesh to anyone visiting Sri Lanka."</p>
+        <p class="review-date">May 2026 · Via TripAdvisor</p>
+      </div>
+
+      <div class="review-card fi fi-d2">
+        <div class="review-top">
+          <img src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1a/f6/f0/d5/default-avatar-2020-17.jpg?w=100&h=100&s=1" alt="Ofir L" class="review-avatar">
+          <div class="reviewer">
+            <strong>Ofir L</strong>
+            <span>Tel Aviv, Israel &middot; Solo trip</span>
+          </div>
+        </div>
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">"If you are looking for a driver in Sri Lanka, Kavish is your man. I traveled with him for our December 2025 vacation and were super impressed by his driving skills and service. He is very polite, speaks good English, and was always happy to adjust the plan according to our needs. I felt very safe and comfortable throughout the whole trip. 5 stars!"</p>
+        <p class="review-date">December 2025 · Via TripAdvisor</p>
+      </div>
+
+      <div class="review-card fi fi-d3">
+        <div class="review-top">
+          <img src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1a/f6/f2/59/default-avatar-2020-24.jpg?w=100&h=100&s=1" alt="R L" class="review-avatar">
+          <div class="reviewer">
+            <strong>R L</strong>
+            <span>Edinburgh, UK &middot; Couples trip</span>
+          </div>
+        </div>
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">"Chana was brilliant, he was so knowledgeable about the areas we were going (Negombo, Wilpattu, Sigiriya and Kandy). We made stops along the way to see some views and some Sri Lankan cultural spots. He was so helpful with everything, always on time and very responsive. Would definitely recommend :)"</p>
+        <p class="review-date">April 2026 · Via TripAdvisor</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── GALLERY ── -->
+<section id="gallery">
+  <div class="container">
+    <div class="gallery-head fi">
+      <span class="label">Gallery</span>
+      <h2 class="title">Sri Lanka Through <em>Our Eyes</em></h2>
+    </div>
+    <div class="gallery-grid">
+      <div class="g-item g0 fi">
+        <img src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/33/2e/7b/9e/caption.jpg?w=1100&h=1100&s=1" alt="Sri Lanka tour photo">
+      </div>
+      <div class="g-item g1 fi fi-d1">
+        <img src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/32/fa/1c/df/caption.jpg?w=800&h=600&s=1" alt="Scenic view">
+      </div>
+      <div class="g-item g2 fi fi-d2">
+        <img src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/32/fa/1c/de/caption.jpg?w=800&h=600&s=1" alt="Cultural site">
+      </div>
+      <div class="g-item g3 fi fi-d1">
+        <img src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/32/fa/1c/dd/caption.jpg?w=800&h=600&s=1" alt="Wildlife">
+      </div>
+      <div class="g-item g4 fi fi-d2">
+        <img src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/32/fa/1c/dc/caption.jpg?w=800&h=600&s=1" alt="Sri Lanka landscape">
+      </div>
+    </div>
+    <div class="gallery-more fi">
+      <a href="https://www.tripadvisor.com/Attraction_Review-g1500185-d34295367-Reviews-Odessy_Travel-Katunayake_Negombo_Western_Province.html" target="_blank" rel="noopener">
+        View all photos on TripAdvisor &rarr;
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ── CONTACT ── -->
+<section id="contact">
+  <div class="container">
+    <div class="contact-grid">
+
+      <div class="contact-left fi">
+        <span class="label">Get In Touch</span>
+        <h2 class="title">Ready to Explore<br><em>Sri Lanka?</em></h2>
+        <p class="contact-lead">Whether you're planning a weekend escape or a full island adventure, we'll craft the perfect itinerary for you. Message us on WhatsApp — we respond fast.</p>
+        <div class="c-btns">
+          <a href="https://wa.me/94764334614" target="_blank" rel="noopener" class="c-btn c-btn-wa">
+            <span class="c-icon">💬</span>
+            <div class="c-label">
+              <strong>Chat on WhatsApp</strong>
+              <span>Fastest way to reach us</span>
+            </div>
+          </a>
+          <a href="tel:+94764334614" class="c-btn c-btn-phone">
+            <span class="c-icon">📞</span>
+            <div class="c-label">
+              <strong>+94 76 433 4614</strong>
+              <span>Call us anytime</span>
+            </div>
+          </a>
+          <a href="https://www.tripadvisor.com/Attraction_Review-g1500185-d34295367-Reviews-Odessy_Travel-Katunayake_Negombo_Western_Province.html" target="_blank" rel="noopener" class="c-btn c-btn-ta">
+            <span class="c-icon">🌿</span>
+            <div class="c-label">
+              <strong>View on TripAdvisor</strong>
+              <span>See our 5-star reviews</span>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <div class="info-cards fi fi-d2">
+        <div class="info-card">
+          <h4>Our Services</h4>
+          <ul class="info-list">
+            <li>🏔️ Multi-day island tours</li>
+            <li>🏛️ Cultural heritage tours</li>
+            <li>🌿 Wildlife &amp; eco safaris</li>
+            <li>🚐 Private transfers</li>
+            <li>🌅 Custom day trips</li>
+          </ul>
+        </div>
+        <div class="info-card">
+          <h4>Based In</h4>
+          <ul class="info-list">
+            <li>📍 Katunayake, Sri Lanka</li>
+            <li>✈️ Near Bandaranaike International Airport</li>
+            <li>🗓️ Available 7 days a week</li>
+          </ul>
+          <h4 style="margin-top: 22px;">Follow Us</h4>
+          <div class="socials-row">
+            <a href="https://www.facebook.com/kavishan.iddhamalgoda?mibextid=wwXIfr" target="_blank" rel="noopener" class="social-btn" title="Facebook">
+              <i class="fa-brands fa-facebook-f"></i>
+            </a>
+            <a href="https://www.tiktok.com/@kavishan044" target="_blank" rel="noopener" class="social-btn" title="TikTok">
+              <i class="fa-brands fa-tiktok"></i>
+            </a>
+            <a href="https://www.tripadvisor.com/Attraction_Review-g1500185-d34295367-Reviews-Odessy_Travel-Katunayake_Negombo_Western_Province.html" target="_blank" rel="noopener" class="social-btn" title="TripAdvisor">
+              <img src="https://cdn.simpleicons.org/tripadvisor/ffffff" alt="TripAdvisor" style="width:20px;height:20px;">
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <p>&copy; 2025 <strong>Odessy Travel</strong> &middot; Katunayake, Sri Lanka</p>
+  <p>Made with love for travelers who want to discover the real Sri Lanka 🇱🇰</p>
+</footer>
+
+<script>
+  // Sticky nav
+  const navbar = document.getElementById('navbar');
+  const onScroll = () => navbar.classList.toggle('scrolled', window.scrollY > 60);
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  // Mobile menu
+  const ham        = document.getElementById('ham');
+  const mobileMenu = document.getElementById('mobileMenu');
+  const mobileClose= document.getElementById('mobileClose');
+  ham.addEventListener('click',        () => mobileMenu.classList.add('open'));
+  mobileClose.addEventListener('click',() => mobileMenu.classList.remove('open'));
+  document.querySelectorAll('.ml').forEach(a =>
+    a.addEventListener('click', () => mobileMenu.classList.remove('open'))
+  );
+
+  // Fade-in on scroll
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('vis'); });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.fi').forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>
