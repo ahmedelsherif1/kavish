@@ -390,7 +390,64 @@
     .ta-badge-text strong { display: block; font-size: 0.97rem; color: var(--text); font-weight: 700; }
     .ta-badge-text span   { font-size: 0.76rem; color: var(--text-light); }
 
-    .reviews-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 26px; }
+    /* ─── REVIEWS CAROUSEL ─── */
+    .carousel-outer {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .carousel-viewport {
+      overflow: hidden;
+      width: 100%;
+      /* hide partial cards cleanly */
+    }
+    .carousel-track {
+      display: flex;
+      gap: 26px;
+      transition: transform 0.46s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      will-change: transform;
+    }
+    .carousel-btn {
+      flex-shrink: 0;
+      width: 46px; height: 46px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      background: #fff;
+      color: var(--green);
+      font-size: 1.6rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s, color 0.2s, border-color 0.2s, opacity 0.2s;
+      line-height: 1;
+      padding: 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    }
+    .carousel-btn:hover:not(:disabled) {
+      background: var(--green);
+      color: #fff;
+      border-color: var(--green);
+    }
+    .carousel-btn:disabled { opacity: 0.25; cursor: default; }
+    .carousel-dots {
+      display: flex;
+      justify-content: center;
+      gap: 9px;
+      margin-top: 30px;
+    }
+    .carousel-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      border: none;
+      background: var(--border);
+      cursor: pointer;
+      transition: background 0.22s, transform 0.22s;
+      padding: 0;
+    }
+    .carousel-dot.active {
+      background: var(--green);
+      transform: scale(1.35);
+    }
     .review-card {
       background: #fff;
       border-radius: 14px;
@@ -763,10 +820,16 @@
       <script async src="https://www.jscache.com/wejs?wtype=cdsratingsonlynarrow&amp;uniq=491&amp;locationId=34295367&amp;lang=en_US&amp;display_version=2" data-loadtrk onload="this.loadtrk=true"></script>
     </div>
 
-    <div class="reviews-grid" id="reviewsGrid">
-      <!-- Populated dynamically from reviews.json -->
-      <div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-light);">Loading reviews…</div>
+    <div class="carousel-outer" id="carouselOuter">
+      <button class="carousel-btn" id="carouselPrev" aria-label="Previous reviews">&#8249;</button>
+      <div class="carousel-viewport" id="carouselViewport">
+        <div class="carousel-track" id="reviewsTrack">
+          <div style="padding:40px;color:var(--text-light);">Loading reviews…</div>
+        </div>
+      </div>
+      <button class="carousel-btn" id="carouselNext" aria-label="Next reviews">&#8250;</button>
     </div>
+    <div class="carousel-dots" id="carouselDots"></div>
   </div>
 </section>
 
@@ -901,7 +964,7 @@
   }, { threshold: 0.1 });
   document.querySelectorAll('.fi').forEach(el => io.observe(el));
 
-  // ── Dynamic reviews from reviews.json ──
+  // ── Reviews carousel ──
   const AVATARS = [
     'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1a/f6/ec/a2/default-avatar-2020-3.jpg?w=100&h=100&s=1',
     'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1a/f6/f0/d5/default-avatar-2020-17.jpg?w=100&h=100&s=1',
@@ -918,38 +981,151 @@
     return m ? `${months[parseInt(m,10)-1]} ${y}` : d;
   }
 
-  async function loadReviews() {
-    const grid = document.getElementById('reviewsGrid');
+  async function buildCarousel() {
+    const outer    = document.getElementById('carouselOuter');
+    const viewport = document.getElementById('carouselViewport');
+    const track    = document.getElementById('reviewsTrack');
+    const dotsEl   = document.getElementById('carouselDots');
+    const prevBtn  = document.getElementById('carouselPrev');
+    const nextBtn  = document.getElementById('carouselNext');
+
+    const GAP = 26;
+    let reviews = [];
+    let currentPage = 0;
+    let autoTimer = null;
+
+    // ── Fetch ──
     try {
       const res  = await fetch('reviews.json?v=' + Date.now());
       const data = await res.json();
-      if (!data.reviews || !data.reviews.length) return;
-
-      grid.innerHTML = data.reviews.map((r, i) => {
-        const stars  = '★'.repeat(Math.max(1, Math.min(5, r.rating || 5)));
-        const date   = formatReviewDate(r.date);
-        const loc    = [r.location, r.trip_type].filter(Boolean).join(' · ');
-        const avatar = AVATARS[i % AVATARS.length];
-        return `
-          <div class="review-card fi vis">
-            <div class="review-top">
-              <img src="${avatar}" alt="${r.name}" class="review-avatar">
-              <div class="reviewer">
-                <strong>${r.name}</strong>
-                ${loc ? `<span>${loc}</span>` : ''}
-              </div>
-            </div>
-            <div class="review-stars">${stars}</div>
-            <p class="review-text">"${r.text}"</p>
-            <p class="review-date">${date ? date + ' · ' : ''}Via TripAdvisor</p>
-          </div>`;
-      }).join('');
+      reviews = data.reviews || [];
     } catch (e) {
       console.warn('Could not load reviews.json:', e);
-      grid.innerHTML = '';
+      track.innerHTML = '';
+      return;
     }
+    if (!reviews.length) { track.innerHTML = ''; return; }
+
+    // ── Build cards ──
+    track.innerHTML = reviews.map((r, i) => {
+      const stars  = '★'.repeat(Math.max(1, Math.min(5, r.rating || 5)));
+      const date   = formatReviewDate(r.date);
+      const loc    = [r.location, r.trip_type].filter(Boolean).join(' · ');
+      const avatar = AVATARS[i % AVATARS.length];
+      return `<div class="review-card">
+        <div class="review-top">
+          <img src="${avatar}" alt="${r.name}" class="review-avatar">
+          <div class="reviewer">
+            <strong>${r.name}</strong>
+            ${loc ? `<span>${loc}</span>` : ''}
+          </div>
+        </div>
+        <div class="review-stars">${stars}</div>
+        <p class="review-text">"${r.text}"</p>
+        <p class="review-date">${date ? date + ' · ' : ''}Via TripAdvisor</p>
+      </div>`;
+    }).join('');
+
+    const cards = Array.from(track.querySelectorAll('.review-card'));
+
+    // ── Helpers ──
+    function cpv() {
+      if (window.innerWidth >= 1024) return Math.min(3, reviews.length);
+      if (window.innerWidth >= 640)  return Math.min(2, reviews.length);
+      return 1;
+    }
+    function totalPages() { return Math.ceil(reviews.length / cpv()); }
+
+    function layout(animate) {
+      const n       = cpv();
+      const vpW     = viewport.offsetWidth;
+      const cardW   = (vpW - GAP * (n - 1)) / n;
+      cards.forEach(c => { c.style.width = cardW + 'px'; });
+      const maxPage = totalPages() - 1;
+      if (currentPage > maxPage) currentPage = maxPage;
+      const offset  = currentPage * n * (cardW + GAP);
+      if (!animate) {
+        track.style.transition = 'none';
+        track.style.transform  = `translateX(-${offset}px)`;
+        track.offsetHeight; // force reflow
+        track.style.transition = '';
+      } else {
+        track.style.transform  = `translateX(-${offset}px)`;
+      }
+    }
+
+    function buildDots() {
+      const tp = totalPages();
+      dotsEl.innerHTML = '';
+      dotsEl.style.display = tp > 1 ? 'flex' : 'none';
+      for (let i = 0; i < tp; i++) {
+        const dot = document.createElement('button');
+        dot.className = 'carousel-dot' + (i === currentPage ? ' active' : '');
+        dot.setAttribute('aria-label', `Page ${i + 1} of ${tp}`);
+        dot.addEventListener('click', () => { goTo(i); resetTimer(); });
+        dotsEl.appendChild(dot);
+      }
+    }
+
+    function syncUI() {
+      const tp = totalPages();
+      prevBtn.disabled = currentPage === 0;
+      nextBtn.disabled = currentPage >= tp - 1;
+      dotsEl.querySelectorAll('.carousel-dot')
+            .forEach((d, i) => d.classList.toggle('active', i === currentPage));
+    }
+
+    function goTo(page) {
+      currentPage = Math.max(0, Math.min(page, totalPages() - 1));
+      layout(true);
+      syncUI();
+    }
+
+    function resetTimer() {
+      clearInterval(autoTimer);
+      if (totalPages() > 1) {
+        autoTimer = setInterval(() => {
+          goTo(currentPage < totalPages() - 1 ? currentPage + 1 : 0);
+        }, 5000);
+      }
+    }
+
+    // ── Event listeners ──
+    prevBtn.addEventListener('click', () => { goTo(currentPage - 1); resetTimer(); });
+    nextBtn.addEventListener('click', () => { goTo(currentPage + 1); resetTimer(); });
+
+    // Pause auto-advance on hover
+    outer.addEventListener('mouseenter', () => clearInterval(autoTimer));
+    outer.addEventListener('mouseleave', () => resetTimer());
+
+    // Touch / swipe
+    let touchX = 0;
+    viewport.addEventListener('touchstart', e => {
+      touchX = e.touches[0].clientX;
+    }, { passive: true });
+    viewport.addEventListener('touchend', e => {
+      const diff = touchX - e.changedTouches[0].clientX;
+      if (Math.abs(diff) > 48) {
+        goTo(diff > 0 ? currentPage + 1 : currentPage - 1);
+        resetTimer();
+      }
+    }, { passive: true });
+
+    // Resize
+    let resizeId;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeId);
+      resizeId = setTimeout(() => { layout(false); buildDots(); syncUI(); }, 180);
+    });
+
+    // ── Init ──
+    layout(false);
+    buildDots();
+    syncUI();
+    resetTimer();
   }
-  loadReviews();
+
+  buildCarousel();
 </script>
 
 </body>
