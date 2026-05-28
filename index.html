@@ -390,7 +390,7 @@
     .ta-badge-text strong { display: block; font-size: 0.97rem; color: var(--text); font-weight: 700; }
     .ta-badge-text span   { font-size: 0.76rem; color: var(--text-light); }
 
-    .reviews-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; }
+    .reviews-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 26px; }
     .review-card {
       background: #fff;
       border-radius: 14px;
@@ -763,47 +763,9 @@
       <script async src="https://www.jscache.com/wejs?wtype=cdsratingsonlynarrow&amp;uniq=491&amp;locationId=34295367&amp;lang=en_US&amp;display_version=2" data-loadtrk onload="this.loadtrk=true"></script>
     </div>
 
-    <div class="reviews-grid">
-
-      <div class="review-card fi fi-d1">
-        <div class="review-top">
-          <img src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1a/f6/ec/a2/default-avatar-2020-3.jpg?w=100&h=100&s=1" alt="Rafał R" class="review-avatar">
-          <div class="reviewer">
-            <strong>Rafał R</strong>
-            <span>Poland &middot; Couples trip</span>
-          </div>
-        </div>
-        <div class="review-stars">★★★★★</div>
-        <p class="review-text">"We had a great experience with Odessy Travel during our trip around Sri Lanka. Everything was well organized and smooth. Our driver, Kaveesh, was punctual, helpful, experienced, and very easy to talk to. He gave us great advice about the best times to visit different places, which really improved our experience. We could always count on his help during the trip, and that gave us a real sense of comfort and safety. We definitely recommend Odessy Travel and Kaveesh to anyone visiting Sri Lanka."</p>
-        <p class="review-date">May 2026 · Via TripAdvisor</p>
-      </div>
-
-      <div class="review-card fi fi-d2">
-        <div class="review-top">
-          <img src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1a/f6/f0/d5/default-avatar-2020-17.jpg?w=100&h=100&s=1" alt="Ofir L" class="review-avatar">
-          <div class="reviewer">
-            <strong>Ofir L</strong>
-            <span>Tel Aviv, Israel &middot; Solo trip</span>
-          </div>
-        </div>
-        <div class="review-stars">★★★★★</div>
-        <p class="review-text">"If you are looking for a driver in Sri Lanka, Kavish is your man. I traveled with him for our December 2025 vacation and were super impressed by his driving skills and service. He is very polite, speaks good English, and was always happy to adjust the plan according to our needs. I felt very safe and comfortable throughout the whole trip. 5 stars!"</p>
-        <p class="review-date">December 2025 · Via TripAdvisor</p>
-      </div>
-
-      <div class="review-card fi fi-d3">
-        <div class="review-top">
-          <img src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1a/f6/f2/59/default-avatar-2020-24.jpg?w=100&h=100&s=1" alt="R L" class="review-avatar">
-          <div class="reviewer">
-            <strong>R L</strong>
-            <span>Edinburgh, UK &middot; Couples trip</span>
-          </div>
-        </div>
-        <div class="review-stars">★★★★★</div>
-        <p class="review-text">"Chana was brilliant, he was so knowledgeable about the areas we were going (Negombo, Wilpattu, Sigiriya and Kandy). We made stops along the way to see some views and some Sri Lankan cultural spots. He was so helpful with everything, always on time and very responsive. Would definitely recommend :)"</p>
-        <p class="review-date">April 2026 · Via TripAdvisor</p>
-      </div>
-
+    <div class="reviews-grid" id="reviewsGrid">
+      <!-- Populated dynamically from reviews.json -->
+      <div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-light);">Loading reviews…</div>
     </div>
   </div>
 </section>
@@ -938,6 +900,56 @@
     entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('vis'); });
   }, { threshold: 0.1 });
   document.querySelectorAll('.fi').forEach(el => io.observe(el));
+
+  // ── Dynamic reviews from reviews.json ──
+  const AVATARS = [
+    'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1a/f6/ec/a2/default-avatar-2020-3.jpg?w=100&h=100&s=1',
+    'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1a/f6/f0/d5/default-avatar-2020-17.jpg?w=100&h=100&s=1',
+    'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1a/f6/f2/59/default-avatar-2020-24.jpg?w=100&h=100&s=1',
+    'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1a/f6/ed/37/default-avatar-2020-5.jpg?w=100&h=100&s=1',
+    'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1a/f6/ef/27/default-avatar-2020-11.jpg?w=100&h=100&s=1',
+    'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1a/f6/f1/52/default-avatar-2020-20.jpg?w=100&h=100&s=1',
+  ];
+
+  function formatReviewDate(d) {
+    if (!d) return '';
+    const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const [y, m] = d.split('-');
+    return m ? `${months[parseInt(m,10)-1]} ${y}` : d;
+  }
+
+  async function loadReviews() {
+    const grid = document.getElementById('reviewsGrid');
+    try {
+      const res  = await fetch('reviews.json?v=' + Date.now());
+      const data = await res.json();
+      if (!data.reviews || !data.reviews.length) return;
+
+      grid.innerHTML = data.reviews.map((r, i) => {
+        const stars  = '★'.repeat(Math.max(1, Math.min(5, r.rating || 5)));
+        const date   = formatReviewDate(r.date);
+        const loc    = [r.location, r.trip_type].filter(Boolean).join(' · ');
+        const avatar = AVATARS[i % AVATARS.length];
+        return `
+          <div class="review-card fi vis">
+            <div class="review-top">
+              <img src="${avatar}" alt="${r.name}" class="review-avatar">
+              <div class="reviewer">
+                <strong>${r.name}</strong>
+                ${loc ? `<span>${loc}</span>` : ''}
+              </div>
+            </div>
+            <div class="review-stars">${stars}</div>
+            <p class="review-text">"${r.text}"</p>
+            <p class="review-date">${date ? date + ' · ' : ''}Via TripAdvisor</p>
+          </div>`;
+      }).join('');
+    } catch (e) {
+      console.warn('Could not load reviews.json:', e);
+      grid.innerHTML = '';
+    }
+  }
+  loadReviews();
 </script>
 
 </body>
