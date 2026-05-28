@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Odessy Travel — Reviews Manager</title>
+  <style>
+    :root {
+      --green:      #1B4D3E;
+      --green-dark: #0F2E23;
+      --gold:       #C9A84C;
+      --cream:      #F7F4EE;
+      --border:     #E2DED5;
+      --text:       #1a1a1a;
+      --text-light: #888;
+      --white:      #ffffff;
+      --red:        #dc2626;
+      --red-bg:     #fee2e2;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      min-height: 100vh;
+      padding-bottom: 100px;
+    }
+
+    /* ── Header ── */
+    header {
+      background: var(--green-dark);
+      padding: 18px 32px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .logo { font-size: 1.25rem; font-weight: 800; color: #fff; letter-spacing: -0.3px; }
+    .logo em { color: var(--gold); font-style: normal; }
+    .logo-badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      background: rgba(201,168,76,0.18);
+      color: var(--gold);
+      padding: 4px 11px;
+      border-radius: 20px;
+    }
+    .header-right { margin-left: auto; font-size: 0.82rem; color: rgba(255,255,255,0.5); }
+
+    /* ── Container ── */
+    .wrap { max-width: 860px; margin: 0 auto; padding: 32px 20px; }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--white);
+      border-radius: 16px;
+      padding: 28px 30px;
+      border: 1px solid var(--border);
+      margin-bottom: 22px;
+    }
+    .card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--green-dark);
+    }
+    .card-title .icon { font-size: 1.2rem; }
+
+    /* ── Status ── */
+    .status {
+      padding: 13px 18px;
+      border-radius: 10px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      margin-bottom: 20px;
+      line-height: 1.5;
+      display: none;
+    }
+    .status.show  { display: block; }
+    .status.ok    { background: #d1fae5; color: #065f46; }
+    .status.err   { background: var(--red-bg); color: #991b1b; }
+    .status.info  { background: #dbeafe; color: #1e40af; }
+
+    /* ── Connect card ── */
+    .connect-desc {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      line-height: 1.65;
+      margin-bottom: 16px;
+    }
+    .connect-row { display: flex; gap: 10px; }
+    .connect-row input {
+      flex: 1;
+      font-family: monospace;
+      font-size: 0.88rem;
+    }
+
+    /* ── Inputs shared ── */
+    input[type="text"],
+    input[type="password"],
+    input[type="url"],
+    input[type="month"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 11px 14px;
+      border-radius: 9px;
+      border: 1.5px solid var(--border);
+      font-size: 0.91rem;
+      font-family: inherit;
+      background: var(--white);
+      color: var(--text);
+      transition: border-color 0.18s;
+      appearance: auto;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--green);
+    }
+    textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
+
+    /* ── Buttons ── */
+    .btn {
+      padding: 11px 20px;
+      border-radius: 9px;
+      border: none;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      transition: filter 0.18s, opacity 0.18s;
+      line-height: 1;
+      white-space: nowrap;
+    }
+    .btn:disabled { opacity: 0.45; cursor: default; pointer-events: none; }
+    .btn-green  { background: var(--green); color: #fff; }
+    .btn-green:hover  { filter: brightness(1.12); }
+    .btn-gold   { background: var(--gold); color: #fff; }
+    .btn-gold:hover   { filter: brightness(0.93); }
+    .btn-ghost  { background: var(--cream); color: var(--text); border: 1.5px solid var(--border); }
+    .btn-ghost:hover  { background: var(--border); }
+    .btn-danger { background: var(--red-bg); color: var(--red); }
+    .btn-danger:hover { background: #fecaca; }
+    .btn-sm { padding: 7px 13px; font-size: 0.8rem; }
+
+    /* ── Form grid ── */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .fg-full { grid-column: 1 / -1; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-light);
+    }
+
+    /* ── Stars ── */
+    .stars-input { display: flex; gap: 4px; }
+    .stars-input button {
+      background: none;
+      border: none;
+      font-size: 1.7rem;
+      cursor: pointer;
+      color: var(--border);
+      padding: 0 2px;
+      line-height: 1;
+      transition: color 0.12s, transform 0.1s;
+    }
+    .stars-input button.on { color: var(--gold); }
+    .stars-input button:hover { transform: scale(1.2); }
+
+    /* ── Photo area ── */
+    .photo-area { display: flex; align-items: center; gap: 14px; }
+    .photo-thumb {
+      width: 58px; height: 58px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--border);
+      background: var(--cream);
+      flex-shrink: 0;
+      display: none;
+    }
+    .photo-thumb.show { display: block; }
+    .photo-inputs { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+    .photo-sep { font-size: 0.75rem; color: var(--text-light); text-align: center; }
+
+    /* ── Form actions ── */
+    .form-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+
+    /* ── Review list ── */
+    .review-count-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+    .r-count {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      font-weight: 500;
+    }
+    .review-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .review-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .r-avatar {
+      width: 46px; height: 46px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--border);
+      flex-shrink: 0;
+    }
+    .r-body { flex: 1; min-width: 0; }
+    .r-name {
+      font-weight: 700;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .r-stars { color: var(--gold); font-size: 0.85rem; letter-spacing: 1px; }
+    .r-meta { font-size: 0.76rem; color: var(--text-light); margin: 3px 0 6px; }
+    .r-text {
+      font-size: 0.84rem;
+      color: #555;
+      line-height: 1.6;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .r-actions { display: flex; flex-direction: column; gap: 6px; flex-shrink: 0; align-items: flex-end; }
+    .r-order { display: flex; gap: 4px; }
+    .r-order button {
+      background: var(--cream);
+      border: 1.5px solid var(--border);
+      border-radius: 6px;
+      width: 28px; height: 28px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s;
+    }
+    .r-order button:hover { background: var(--border); }
+    .r-order button:disabled { opacity: 0.25; cursor: default; }
+
+    /* ── Empty state ── */
+    .empty {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-light);
+      font-size: 0.9rem;
+    }
+    .empty .emoji { font-size: 2.5rem; display: block; margin-bottom: 10px; }
+
+    /* ── Save bar (sticky bottom) ── */
+    .save-bar {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: var(--green-dark);
+      color: #fff;
+      padding: 14px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      transform: translateY(110%);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      z-index: 99;
+      box-shadow: 0 -4px 24px rgba(0,0,0,0.2);
+    }
+    .save-bar.up { transform: translateY(0); }
+    .save-bar-left { font-size: 0.9rem; }
+    .save-bar-left strong { display: block; font-size: 1rem; }
+    .save-bar-left span { opacity: 0.6; font-size: 0.8rem; }
+    .save-bar-btns { display: flex; gap: 10px; flex-shrink: 0; }
+
+    /* ── Spinner ── */
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spin { display: inline-block; animation: spin 0.8s linear infinite; }
+
+    /* ── Responsive ── */
+    @media (max-width: 580px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .fg-full { grid-column: 1; }
+      header { padding: 14px 18px; }
+      .wrap { padding: 20px 14px; }
+      .card { padding: 20px 18px; }
+      .save-bar { padding: 12px 18px; }
+      .r-actions { flex-direction: row; flex-wrap: wrap; }
+      .connect-row { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Odessy <em>Travel</em></div>
+  <div class="logo-badge">Reviews Manager</div>
+  <div class="header-right" id="headerStatus"></div>
+</header>
+
+<div class="wrap">
+
+  <!-- Status banner -->
+  <div class="status" id="statusBanner"></div>
+
+  <!-- ── Connect card ── -->
+  <div class="card" id="connectCard">
+    <div class="card-title"><span class="icon">🔑</span> Connect to GitHub</div>
+    <p class="connect-desc">
+      Enter your GitHub personal access token below. It will be saved in your browser so you only
+      need to do this once on this device. The token is never sent anywhere except directly to GitHub.
+    </p>
+    <div class="connect-row">
+      <input type="password" id="tokenInput" placeholder="github_pat_…" autocomplete="off" onkeydown="if(event.key==='Enter')connect()">
+      <button class="btn btn-green" onclick="connect()" id="connectBtn">Connect</button>
+    </div>
+  </div>
+
+  <!-- ── Add / Edit form ── -->
+  <div class="card" id="formCard" style="display:none">
+    <div class="card-title">
+      <span class="icon" id="formIcon">✏️</span>
+      <span id="formHeading">Add New Review</span>
+    </div>
+
+    <div class="form-grid">
+
+      <div class="form-group">
+        <label class="form-label">Reviewer Name *</label>
+        <input type="text" id="fName" placeholder="e.g. Rafał R">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Location</label>
+        <input type="text" id="fLocation" placeholder="e.g. Warsaw, Poland">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Trip Type</label>
+        <select id="fTrip">
+          <option value="">— optional —</option>
+          <option value="Couples trip">Couples trip</option>
+          <option value="Solo trip">Solo trip</option>
+          <option value="Family trip">Family trip</option>
+          <option value="Friends trip">Friends trip</option>
+          <option value="Business trip">Business trip</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Month of Review</label>
+        <input type="month" id="fDate">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Star Rating</label>
+        <div class="stars-input" id="starsInput">
+          <button type="button" onclick="setRating(1)">★</button>
+          <button type="button" onclick="setRating(2)">★</button>
+          <button type="button" onclick="setRating(3)">★</button>
+          <button type="button" onclick="setRating(4)">★</button>
+          <button type="button" onclick="setRating(5)">★</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Reviewer Photo</label>
+        <div class="photo-area">
+          <img id="photoThumb" class="photo-thumb" src="" alt="preview">
+          <div class="photo-inputs">
+            <input type="url" id="fPhotoUrl" placeholder="Paste photo URL (optional)" oninput="onUrlInput(this.value)">
+            <div class="photo-sep">— or upload —</div>
+            <input type="file" id="fPhotoFile" accept="image/*" onchange="onFileInput(this)">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group fg-full">
+        <label class="form-label">Review Text *</label>
+        <textarea id="fText" placeholder="Paste the review text from TripAdvisor here…" rows="5"></textarea>
+      </div>
+
+    </div><!-- /form-grid -->
+
+    <div class="form-actions">
+      <button class="btn btn-green" onclick="submitReview()" id="submitBtn">Add Review</button>
+      <button class="btn btn-ghost" onclick="cancelEdit()" id="cancelBtn" style="display:none">Cancel</button>
+      <button class="btn btn-ghost" onclick="resetForm()">Clear</button>
+    </div>
+  </div><!-- /form card -->
+
+  <!-- ── Reviews list ── -->
+  <div class="card" id="listCard" style="display:none">
+    <div class="review-count-bar">
+      <div class="card-title" style="margin:0"><span class="icon">📋</span> <span id="countLabel">Reviews</span></div>
+    </div>
+    <div id="reviewsList"></div>
+  </div>
+
+</div><!-- /wrap -->
+
+<!-- ── Save bar ── -->
+<div class="save-bar" id="saveBar">
+  <div class="save-bar-left">
+    <strong>You have unsaved changes</strong>
+    <span id="saveBarSub">Click "Save to Website" to go live.</span>
+  </div>
+  <div class="save-bar-btns">
+    <button class="btn btn-ghost" onclick="discardAll()" style="color:#fff;border-color:rgba(255,255,255,0.25);">Discard</button>
+    <button class="btn btn-gold" onclick="pushToGitHub()" id="pushBtn">💾 Save to Website</button>
+  </div>
+</div>
+
+
+<script>
+// ─────────────────────────────────────────────
+//  CONFIG
+// ─────────────────────────────────────────────
+const REPO      = 'ahmedelsherif1/kavish';
+const FILE_PATH = 'reviews.json';
+const FALLBACK_AVATARS = [
+  'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1a/f6/ec/a2/default-avatar-2020-3.jpg?w=100&h=100&s=1',
+  'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1a/f6/f0/d5/default-avatar-2020-17.jpg?w=100&h=100&s=1',
+  'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1a/f6/f2/59/default-avatar-2020-24.jpg?w=100&h=100&s=1',
+  'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1a/f6/ed/37/default-avatar-2020-5.jpg?w=100&h=100&s=1',
+  'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1a/f6/ef/27/default-avatar-2020-11.jpg?w=100&h=100&s=1',
+  'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1a/f6/f1/52/default-avatar-2020-20.jpg?w=100&h=100&s=1',
+];
+
+// ─────────────────────────────────────────────
+//  STATE
+// ─────────────────────────────────────────────
+let token      = '';
+let fileSha    = '';
+let reviews    = [];
+let editIdx    = -1;      // -1 = adding new
+let rating     = 5;
+let dirty      = false;
+
+// ─────────────────────────────────────────────
+//  INIT
+// ─────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  setRating(5);
+  const saved = localStorage.getItem('ot_admin_token');
+  if (saved) {
+    document.getElementById('tokenInput').value = saved;
+    connect();
+  }
+});
+
+// ─────────────────────────────────────────────
+//  AUTH
+// ─────────────────────────────────────────────
+async function connect() {
+  token = document.getElementById('tokenInput').value.trim();
+  if (!token) return showStatus('Please enter your GitHub token.', 'err');
+
+  const btn = document.getElementById('connectBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin">⟳</span> Connecting…';
+  showStatus('Connecting to GitHub…', 'info');
+
+  try {
+    const data = await apiGet(`https://api.github.com/repos/${REPO}/contents/${FILE_PATH}`);
+    fileSha  = data.sha;
+    const raw = JSON.parse(decodeB64(data.content));
+    reviews  = raw.reviews || [];
+
+    localStorage.setItem('ot_admin_token', token);
+    document.getElementById('connectCard').style.display = 'none';
+    document.getElementById('formCard').style.display   = 'block';
+    document.getElementById('listCard').style.display   = 'block';
+    document.getElementById('headerStatus').textContent = '● Connected';
+    renderList();
+    showStatus(`✅ Connected! Loaded ${reviews.length} review${reviews.length !== 1 ? 's' : ''}.`, 'ok');
+  } catch(e) {
+    showStatus('❌ Could not connect. Check that your token is correct and has "repo" access.', 'err');
+    btn.disabled = false;
+    btn.textContent = 'Connect';
+  }
+}
+
+// ─────────────────────────────────────────────
+//  FORM HELPERS
+// ─────────────────────────────────────────────
+function setRating(n) {
+  rating = n;
+  document.querySelectorAll('#starsInput button').forEach((b, i) => {
+    b.classList.toggle('on', i < n);
+  });
+}
+
+function onUrlInput(val) {
+  const img = document.getElementById('photoThumb');
+  if (val) { img.src = val; img.classList.add('show'); }
+  else { img.classList.remove('show'); }
+  // clear file input if URL is typed
+  if (val) document.getElementById('fPhotoFile').value = '';
+}
+
+function onFileInput(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('fPhotoUrl').value = '';
+    const img = document.getElementById('photoThumb');
+    img.src = e.target.result;
+    img.classList.add('show');
+  };
+  reader.readAsDataURL(file);
+}
+
+function getPhoto() {
+  const url = document.getElementById('fPhotoUrl').value.trim();
+  if (url) return url;
+  const thumb = document.getElementById('photoThumb');
+  if (thumb.classList.contains('show') && thumb.src.startsWith('data:')) return thumb.src;
+  return '';
+}
+
+function resetForm() {
+  document.getElementById('fName').value     = '';
+  document.getElementById('fLocation').value = '';
+  document.getElementById('fTrip').value     = '';
+  document.getElementById('fDate').value     = '';
+  document.getElementById('fText').value     = '';
+  document.getElementById('fPhotoUrl').value = '';
+  document.getElementById('fPhotoFile').value= '';
+  document.getElementById('photoThumb').classList.remove('show');
+  setRating(5);
+  editIdx = -1;
+  document.getElementById('formHeading').textContent    = 'Add New Review';
+  document.getElementById('formIcon').textContent       = '✏️';
+  document.getElementById('submitBtn').textContent      = 'Add Review';
+  document.getElementById('cancelBtn').style.display    = 'none';
+}
+
+function cancelEdit() {
+  resetForm();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ─────────────────────────────────────────────
+//  SUBMIT (add or update)
+// ─────────────────────────────────────────────
+function submitReview() {
+  const name = document.getElementById('fName').value.trim();
+  const text = document.getElementById('fText').value.trim();
+  if (!name) return showStatus('⚠️ Reviewer name is required.', 'err');
+  if (!text) return showStatus('⚠️ Review text is required.', 'err');
+
+  const review = {
+    name,
+    location:  document.getElementById('fLocation').value.trim(),
+    trip_type: document.getElementById('fTrip').value,
+    rating,
+    date:      document.getElementById('fDate').value || '',
+    text,
+  };
+
+  const photo = getPhoto();
+  if (photo) review.avatar = photo;
+
+  if (editIdx >= 0) {
+    reviews[editIdx] = review;
+    showStatus('✏️ Review updated — save when ready.', 'ok');
+  } else {
+    reviews.unshift(review);   // newest first
+    showStatus('✅ Review added — save when ready.', 'ok');
+  }
+
+  resetForm();
+  renderList();
+  markDirty();
+}
+
+// ─────────────────────────────────────────────
+//  EDIT
+// ─────────────────────────────────────────────
+function startEdit(i) {
+  const r = reviews[i];
+  editIdx = i;
+  document.getElementById('fName').value     = r.name      || '';
+  document.getElementById('fLocation').value = r.location  || '';
+  document.getElementById('fTrip').value     = r.trip_type || '';
+  document.getElementById('fDate').value     = r.date ? r.date.slice(0, 7) : '';
+  document.getElementById('fText').value     = r.text      || '';
+
+  const thumb = document.getElementById('photoThumb');
+  if (r.avatar) {
+    document.getElementById('fPhotoUrl').value = r.avatar;
+    thumb.src = r.avatar;
+    thumb.classList.add('show');
+  } else {
+    document.getElementById('fPhotoUrl').value = '';
+    thumb.classList.remove('show');
+  }
+
+  setRating(r.rating || 5);
+  document.getElementById('formHeading').textContent = 'Edit Review';
+  document.getElementById('formIcon').textContent    = '📝';
+  document.getElementById('submitBtn').textContent   = 'Update Review';
+  document.getElementById('cancelBtn').style.display = 'inline-flex';
+
+  document.getElementById('formCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ─────────────────────────────────────────────
+//  DELETE
+// ─────────────────────────────────────────────
+function deleteReview(i) {
+  const name = reviews[i].name;
+  if (!confirm(`Delete the review from "${name}"?\n\nThis can't be undone — you will need to save after.`)) return;
+  reviews.splice(i, 1);
+  if (editIdx === i) resetForm();
+  renderList();
+  markDirty();
+  showStatus(`🗑️ Review from "${name}" removed — save when ready.`, 'info');
+}
+
+// ─────────────────────────────────────────────
+//  REORDER
+// ─────────────────────────────────────────────
+function moveUp(i) {
+  if (i === 0) return;
+  [reviews[i - 1], reviews[i]] = [reviews[i], reviews[i - 1]];
+  if (editIdx === i) editIdx = i - 1;
+  else if (editIdx === i - 1) editIdx = i;
+  renderList();
+  markDirty();
+}
+
+function moveDown(i) {
+  if (i === reviews.length - 1) return;
+  [reviews[i], reviews[i + 1]] = [reviews[i + 1], reviews[i]];
+  if (editIdx === i) editIdx = i + 1;
+  else if (editIdx === i + 1) editIdx = i;
+  renderList();
+  markDirty();
+}
+
+// ─────────────────────────────────────────────
+//  RENDER LIST
+// ─────────────────────────────────────────────
+function renderList() {
+  const list = document.getElementById('reviewsList');
+  const label = document.getElementById('countLabel');
+  label.textContent = `${reviews.length} Review${reviews.length !== 1 ? 's' : ''}`;
+
+  if (!reviews.length) {
+    list.innerHTML = `<div class="empty"><span class="emoji">💬</span>No reviews yet — add one above!</div>`;
+    return;
+  }
+
+  list.innerHTML = reviews.map((r, i) => {
+    const avatar = r.avatar || FALLBACK_AVATARS[i % FALLBACK_AVATARS.length];
+    const stars  = '★'.repeat(Math.min(5, r.rating || 5));
+    const empty  = '☆'.repeat(5 - Math.min(5, r.rating || 5));
+    const meta   = [r.location, r.trip_type, r.date ? fmtDate(r.date) : ''].filter(Boolean).join(' · ');
+    return `
+    <div class="review-row" id="rrow-${i}">
+      <img class="r-avatar" src="${avatar}" alt="${escHtml(r.name)}"
+           onerror="this.src='${FALLBACK_AVATARS[i % FALLBACK_AVATARS.length]}'">
+      <div class="r-body">
+        <div class="r-name">
+          ${escHtml(r.name)}
+          <span class="r-stars">${stars}${empty}</span>
+        </div>
+        ${meta ? `<div class="r-meta">${escHtml(meta)}</div>` : ''}
+        <div class="r-text">${escHtml(r.text)}</div>
+      </div>
+      <div class="r-actions">
+        <div class="r-order">
+          <button title="Move up"   onclick="moveUp(${i})"   ${i === 0 ? 'disabled' : ''}>↑</button>
+          <button title="Move down" onclick="moveDown(${i})" ${i === reviews.length - 1 ? 'disabled' : ''}>↓</button>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="startEdit(${i})">✏️ Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteReview(${i})">🗑️ Delete</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ─────────────────────────────────────────────
+//  DIRTY / SAVE BAR
+// ─────────────────────────────────────────────
+function markDirty() {
+  dirty = true;
+  document.getElementById('saveBar').classList.add('up');
+  document.getElementById('saveBarSub').textContent =
+    `${reviews.length} review${reviews.length !== 1 ? 's' : ''} · click "Save to Website" to go live`;
+}
+
+function discardAll() {
+  if (!confirm('Discard all unsaved changes and reload from GitHub?')) return;
+  dirty = false;
+  document.getElementById('saveBar').classList.remove('up');
+  resetForm();
+  connect();
+}
+
+// ─────────────────────────────────────────────
+//  PUSH TO GITHUB
+// ─────────────────────────────────────────────
+async function pushToGitHub() {
+  const btn = document.getElementById('pushBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin">⟳</span> Saving…';
+
+  try {
+    const payload = {
+      last_updated: new Date().toISOString().slice(0, 19) + 'Z',
+      total: reviews.length,
+      reviews,
+    };
+    const b64 = encodeB64(JSON.stringify(payload, null, 2));
+
+    await apiPut(`https://api.github.com/repos/${REPO}/contents/${FILE_PATH}`, {
+      message: `chore: update reviews via admin panel (${reviews.length} total)`,
+      content: b64,
+      sha: fileSha,
+    });
+
+    // Refresh the SHA for the next save
+    const fresh = await apiGet(`https://api.github.com/repos/${REPO}/contents/${FILE_PATH}`);
+    fileSha = fresh.sha;
+
+    dirty = false;
+    document.getElementById('saveBar').classList.remove('up');
+    showStatus('🎉 Saved! The website will update in about 30 seconds.', 'ok');
+  } catch(e) {
+    showStatus('❌ Save failed: ' + (e.message || 'unknown error. Try reconnecting.'), 'err');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '💾 Save to Website';
+  }
+}
+
+// ─────────────────────────────────────────────
+//  API HELPERS
+// ─────────────────────────────────────────────
+async function apiGet(url) {
+  const r = await fetch(url, {
+    headers: {
+      Authorization: `token ${token}`,
+      Accept: 'application/vnd.github+json',
+      'X-GitHub-Api-Version': '2022-11-28',
+    },
+  });
+  if (!r.ok) throw new Error(`GitHub API ${r.status}: ${r.statusText}`);
+  return r.json();
+}
+
+async function apiPut(url, body) {
+  const r = await fetch(url, {
+    method: 'PUT',
+    headers: {
+      Authorization: `token ${token}`,
+      Accept: 'application/vnd.github+json',
+      'Content-Type': 'application/json',
+      'X-GitHub-Api-Version': '2022-11-28',
+    },
+    body: JSON.stringify(body),
+  });
+  if (!r.ok) {
+    let msg = `${r.status} ${r.statusText}`;
+    try { const j = await r.json(); msg = j.message || msg; } catch(_) {}
+    throw new Error(msg);
+  }
+  return r.json();
+}
+
+// ─────────────────────────────────────────────
+//  ENCODING (Unicode-safe)
+// ─────────────────────────────────────────────
+function encodeB64(str) {
+  // Handle Unicode characters (Arabic, Polish, etc.)
+  return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,
+    (_, p1) => String.fromCharCode('0x' + p1)));
+}
+
+function decodeB64(b64) {
+  return decodeURIComponent(atob(b64.replace(/\n/g, '')).split('').map(
+    c => '%' + c.charCodeAt(0).toString(16).padStart(2, '0')).join(''));
+}
+
+// ─────────────────────────────────────────────
+//  UTILS
+// ─────────────────────────────────────────────
+function fmtDate(d) {
+  if (!d) return '';
+  const months = ['January','February','March','April','May','June',
+                  'July','August','September','October','November','December'];
+  const [y, m] = d.split('-');
+  return m ? `${months[+m - 1]} ${y}` : d;
+}
+
+function escHtml(s) {
+  return String(s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function showStatus(msg, type) {
+  const el = document.getElementById('statusBanner');
+  el.textContent = msg;
+  el.className   = `status show ${type}`;
+  if (type !== 'err') setTimeout(() => { el.className = 'status'; }, 6000);
+  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// Warn before leaving with unsaved changes
+window.addEventListener('beforeunload', e => {
+  if (dirty) { e.preventDefault(); e.returnValue = ''; }
+});
+</script>
+</body>
+</html>
