@@ -1011,7 +1011,7 @@
       const stars  = '★'.repeat(Math.max(1, Math.min(5, r.rating || 5)));
       const date   = formatReviewDate(r.date);
       const loc    = [r.location, r.trip_type].filter(Boolean).join(' · ');
-      const avatar = AVATARS[i % AVATARS.length];
+      const avatar = r.avatar || AVATARS[i % AVATARS.length];
       return `<div class="review-card">
         <div class="review-top">
           <img src="${avatar}" alt="${r.name}" class="review-avatar">
