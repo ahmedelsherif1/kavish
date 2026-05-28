@@ -327,7 +327,10 @@
       transition: transform 0.3s, box-shadow 0.3s;
     }
     .tour-card:hover { transform: translateY(-7px); box-shadow: 0 18px 44px rgba(27,77,62,0.16); }
-    .tour-card img { width: 100%; height: 160px; object-fit: cover; display: block; }
+    .tour-card-img-wrap { position: relative; height: 160px; overflow: hidden; }
+    .tour-card-img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; }
+    .tour-card:hover .tour-card-img-wrap img { transform: scale(1.06); }
+    .tour-card-img-wrap::after { content: ''; position: absolute; inset: 0; background: rgba(10,30,20,0.38); }
     .tour-card-body { padding: 22px 18px 26px; text-align: center; }
     .tour-card-body .icon { font-size: 1.8rem; margin-bottom: 10px; }
     .tour-card-body h3 { font-size: 0.98rem; font-family: 'Inter', sans-serif; font-weight: 700; color: var(--green); margin-bottom: 7px; }
@@ -649,7 +652,9 @@
     </div>
     <div class="tours-grid">
       <div class="tour-card fi fi-d1">
-        <img src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/32/d4/fb/bf/turn-your-travel-plans.jpg?w=600&h=360&s=1" alt="Multi-day Tours">
+        <div class="tour-card-img-wrap">
+          <img src="https://raw.githubusercontent.com/ahmedelsherif1/kavish/main/images/multi-day-tours.jpeg" alt="Multi-day Tours">
+        </div>
         <div class="tour-card-body">
           <div class="icon">🏔️</div>
           <h3>Multi-day Tours</h3>
@@ -657,7 +662,9 @@
         </div>
       </div>
       <div class="tour-card fi fi-d2">
-        <img src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/32/d4/fb/c3/explore-culture-nature.jpg?w=600&h=360&s=1" alt="Cultural Tours">
+        <div class="tour-card-img-wrap">
+          <img src="https://raw.githubusercontent.com/ahmedelsherif1/kavish/main/images/cultural-tours.jpeg" alt="Cultural Tours">
+        </div>
         <div class="tour-card-body">
           <div class="icon">🏛️</div>
           <h3>Cultural Tours</h3>
@@ -665,7 +672,9 @@
         </div>
       </div>
       <div class="tour-card fi fi-d3">
-        <img src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/32/d4/fb/ba/discover-sri-lanka-s.jpg?w=600&h=360&s=1" alt="Eco Tours">
+        <div class="tour-card-img-wrap">
+          <img src="https://raw.githubusercontent.com/ahmedelsherif1/kavish/main/images/eco-tours.jpeg" alt="Eco Tours">
+        </div>
         <div class="tour-card-body">
           <div class="icon">🌿</div>
           <h3>Eco Tours</h3>
@@ -673,7 +682,9 @@
         </div>
       </div>
       <div class="tour-card fi fi-d2">
-        <img src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/32/d4/fb/b8/private-tours-across.jpg?w=600&h=360&s=1" alt="Private Tours">
+        <div class="tour-card-img-wrap">
+          <img src="https://raw.githubusercontent.com/ahmedelsherif1/kavish/main/images/private-tours.png" alt="Private Tours">
+        </div>
         <div class="tour-card-body">
           <div class="icon">🚐</div>
           <h3>Private Tours</h3>
@@ -681,7 +692,9 @@
         </div>
       </div>
       <div class="tour-card fi fi-d3">
-        <img src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/32/d4/fb/be/reliable-transport-and.jpg?w=600&h=360&s=1" alt="Day Trips">
+        <div class="tour-card-img-wrap">
+          <img src="https://raw.githubusercontent.com/ahmedelsherif1/kavish/main/images/day-trips.jpeg" alt="Day Trips">
+        </div>
         <div class="tour-card-body">
           <div class="icon">🌅</div>
           <h3>Day Trips</h3>
