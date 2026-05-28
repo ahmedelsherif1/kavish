@@ -1,0 +1,30 @@
+{
+  "last_updated": "2026-05-28T00:00:00Z",
+  "total": 3,
+  "reviews": [
+    {
+      "name": "Rafał R",
+      "location": "Poland",
+      "trip_type": "Couples trip",
+      "rating": 5,
+      "date": "2026-05",
+      "text": "We had a great experience with Odessy Travel during our trip around Sri Lanka. Everything was well organized and smooth. Our driver, Kaveesh, was punctual, helpful, experienced, and very easy to talk to. He gave us great advice about the best times to visit different places, which really improved our experience. We could always count on his help during the trip, and that gave us a real sense of comfort and safety. We definitely recommend Odessy Travel and Kaveesh to anyone visiting Sri Lanka."
+    },
+    {
+      "name": "Ofir L",
+      "location": "Tel Aviv, Israel",
+      "trip_type": "Solo trip",
+      "rating": 5,
+      "date": "2025-12",
+      "text": "If you are looking for a driver in Sri Lanka, Kavish is your man. I traveled with him for our December 2025 vacation and were super impressed by his driving skills and service. He is very polite, speaks good English, and was always happy to adjust the plan according to our needs. I felt very safe and comfortable throughout the whole trip. 5 stars!"
+    },
+    {
+      "name": "R L",
+      "location": "Edinburgh, UK",
+      "trip_type": "Couples trip",
+      "rating": 5,
+      "date": "2026-04",
+      "text": "Chana was brilliant, he was so knowledgeable about the areas we were going (Negombo, Wilpattu, Sigiriya and Kandy). We made stops along the way to see some views and some Sri Lankan cultural spots. He was so helpful with everything, always on time and very responsive. Would definitely recommend :)"
+    }
+  ]
+}
